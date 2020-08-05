@@ -342,6 +342,7 @@ Encoding::utf8toutf32(const char *str, int str_size, UTF32Char **ustr,
     else
     {
         print_error("cannot allocate memory on utf8toutf32.");
+        return 1;
     }
     return 0;
 }

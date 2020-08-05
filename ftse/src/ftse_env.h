@@ -6,12 +6,14 @@
 namespace ftse {
 class FullTextSearchEngineEnv {
 public:
-    FullTextSearchEngineEnv();
+    FullTextSearchEngineEnv(int token_len);
     Database& db();
     InvertIndex& get_invert_index();
+    void add_document(const char *title, const char *body);
 private:
     InvertIndex invert_index_; 
     Database db_;
+    int token_len_;
 };
 }
 #endif // _FULL_TEXT_SEARCH_ENGINE_FTSE_ENV_H_

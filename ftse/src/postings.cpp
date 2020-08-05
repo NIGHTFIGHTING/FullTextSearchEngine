@@ -20,7 +20,6 @@ std::vector<PostingsList> Postings::merge_postings(std::vector<PostingsList>& pa
     auto pla = pa.begin();
     auto plb = pb.begin();
     while(pla != pa.end() && plb != pb.end()) {
-        cout << "end----" << endl;
         if(pla->document_id == plb->document_id) {
             result.push_back(std::move(*pla));
             ++pla;
@@ -64,9 +63,9 @@ void Postings::merge_invert_index(InvertIndex& base_ii, InvertIndex& to_be_added
             base_ii[ii.first].documents_count += ii.second.documents_count;
             base_ii[ii.first].positions_count += ii.second.positions_count;
         } else {
-            cout << "___first: " << ii.first << endl;
+            cout << "第一次出现token: " << ii.first << " " << ii.second.token <<endl;
             //base_ii[ii.first] = std::move(ii.second);
-            Utils::print_invert_index_info(to_be_added_ii, ii.first);
+            //Utils::print_invert_index_info(to_be_added_ii, ii.first);
             base_ii[ii.first] = ii.second;
             Utils::print_invert_index_info(base_ii, ii.first);
         }
