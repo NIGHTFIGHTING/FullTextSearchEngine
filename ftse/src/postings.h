@@ -3,9 +3,17 @@
 #include "global.h"
 #include <vector>
 namespace ftse {
+class FullTextSearchEngineEnv;
 class Postings {
 public:
     Postings(); 
+    static void decode_postings(FullTextSearchEngineEnv& ftse_env,
+            const char* postings_extend, int postings_extend_size,
+            std::vector<PostingsList>* postings, int* decode_len);
+    static void fetch_postings(FullTextSearchEngineEnv& ftse_env,
+            int token_id, std::vector<PostingsList>* postings);
+    static void update_postings(FullTextSearchEngineEnv& ftse_env,
+            InvertIndexEntry& p);
     static std::vector<PostingsList> merge_postings(std::vector<PostingsList>& pa,
             std::vector<PostingsList>& pb);
     static void merge_invert_index(InvertIndex& base_ii, InvertIndex& to_be_added_ii);
