@@ -1,5 +1,5 @@
-#ifndef FULL_TEXT_SEARCH_ENGINE_POSTINGS_H 
-#define FULL_TEXT_SEARCH_ENGINE_POSTINGS_H
+#ifndef _FULL_TEXT_SEARCH_ENGINE_POSTINGS_H 
+#define _FULL_TEXT_SEARCH_ENGINE_POSTINGS_H
 #include "global.h"
 #include <vector>
 namespace ftse {
@@ -7,7 +7,7 @@ class FullTextSearchEngineEnv;
 class Postings {
 public:
     Postings(); 
-    static void decode_postings(FullTextSearchEngineEnv& ftse_env,
+    static void decode_postings(
             const char* postings_extend, int postings_extend_size,
             std::vector<PostingsList>* postings, int* decode_len);
     static void fetch_postings(FullTextSearchEngineEnv& ftse_env,
@@ -19,4 +19,4 @@ public:
     static void merge_invert_index(InvertIndex& base_ii, InvertIndex& to_be_added_ii);
 };
 }
-#endif // FULL_TEXT_SEARCH_ENGINE_POSTINGS_H
+#endif // _FULL_TEXT_SEARCH_ENGINE_POSTINGS_H

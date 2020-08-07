@@ -9,12 +9,14 @@ using namespace std;
 Postings::Postings() {
 }
 
-void Postings::decode_postings(FullTextSearchEngineEnv& ftse_env,
+void Postings::decode_postings(
         const char* postings_extend, int postings_extend_size,
         std::vector<PostingsList>* postings, int* decode_len) {
+    *decode_len = 0;
     const int* p = (const int *)postings_extend;
-    const int* pend = (const int *)postings_extend+postings_extend_size;
+    const int* pend = (const int *)(postings_extend+postings_extend_size);
     for(; p < pend; ++p) {
+        *(decode_len++);
         PostingsList pl;
         pl.document_id = *(p++);
         pl.positions_count = *(p++);
@@ -36,7 +38,11 @@ void Postings::fetch_postings(FullTextSearchEngineEnv& ftse_env, int token_id, s
         return;
     }
     int decode_len;
-    decode_postings(ftse_env, postings_extend, postings_extend_size, postings, &decode_len);
+    decode_postings(postings_extend, postings_extend_size, postings, &decode_len);
+    if(decode_len != docs_count) {
+        cout << "postings list decode error: stored:" <<
+                docs_count << " decoded:" << decode_len << endl;
+    }
 
 }
 
