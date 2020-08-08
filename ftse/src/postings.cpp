@@ -29,25 +29,34 @@ void Postings::decode_postings(
 }
 
 
-void Postings::fetch_postings(FullTextSearchEngineEnv& ftse_env, int token_id, std::vector<PostingsList>* postings) {
+int Postings::fetch_postings(FullTextSearchEngineEnv& ftse_env, int token_id, std::vector<PostingsList>* postings) {
     char* postings_extend;
     int docs_count, postings_extend_size;
     // 获取这个token在db中的postings(documend_id, positions_count, postings_list)
     int ret = ftse_env.db().db_get_postings(token_id, &docs_count, (void **)&postings_extend, &postings_extend_size);
     if(ret != 0 || postings_extend_size <= 0) {
-        return;
+        return RET_FAIL;
     }
     int decode_len;
     decode_postings(postings_extend, postings_extend_size, postings, &decode_len);
     if(decode_len != docs_count) {
         cout << "postings list decode error: stored:" <<
                 docs_count << " decoded:" << decode_len << endl;
+        return RET_FAIL;
     }
-
+    return RET_SUCC;
 }
 
 void Postings::update_postings(FullTextSearchEngineEnv& ftse_env,
-        InvertIndexEntry& p) {
+        InvertIndexEntry& ii) {
+    std::vector<PostingsList> old_postings;
+    if(RET_FAIL == fetch_postings(ftse_env, ii.token_id, &old_postings)) {
+        return;
+    }
+    if(old_postings.size() > 0) {
+        ii.postings_list = merge_postings(old_postings, ii.postings_list);
+        ii.documents_count += old_postings.size(); 
+    }
 }
 
 // 将二者连接成按文档编号升序排列
@@ -92,8 +101,8 @@ std::vector<PostingsList> Postings::merge_postings(std::vector<PostingsList>& pa
         cout << endl;
     }
     cout << endl << "print_merge_positions-------------end---------" << endl;
-    //return std::move(result);
-    return result;
+    return std::move(result);
+    //return result;
 }
 // ii -> invert_index
 void Postings::merge_invert_index(InvertIndex& base_ii, InvertIndex& to_be_added_ii) {

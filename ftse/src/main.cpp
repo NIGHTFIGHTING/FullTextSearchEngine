@@ -22,7 +22,7 @@ int main() {
     const ftse::UTF32Char* start;;
     int n = ftse::Token::ngram_next(ustr, ustr+ustr_len, 2, &start); 
     //cout << "n: " << n << endl << " start: " << *start << endl;;
-    ftse::FullTextSearchEngineEnv ftse_env(N_GRAM);
+    ftse::FullTextSearchEngineEnv ftse_env(N_GRAM, 0);
     ftse_env.add_document("搜索", str.c_str());
     ftse_env.add_document("搜索1", str1.c_str());
     //ftse::Token token;

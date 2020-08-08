@@ -10,7 +10,7 @@ public:
     static void decode_postings(
             const char* postings_extend, int postings_extend_size,
             std::vector<PostingsList>* postings, int* decode_len);
-    static void fetch_postings(FullTextSearchEngineEnv& ftse_env,
+    static int fetch_postings(FullTextSearchEngineEnv& ftse_env,
             int token_id, std::vector<PostingsList>* postings);
     static void update_postings(FullTextSearchEngineEnv& ftse_env,
             InvertIndexEntry& p);

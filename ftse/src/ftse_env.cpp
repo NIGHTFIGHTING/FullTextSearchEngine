@@ -1,10 +1,11 @@
 #include "ftse_env.h"
 #include "encoding.h"
 #include "token.h"
+#include "postings.h"
 
 using namespace ftse;
-FullTextSearchEngineEnv::FullTextSearchEngineEnv(int token_len):db_("./ftse.db"),
-        token_len_(token_len) {
+FullTextSearchEngineEnv::FullTextSearchEngineEnv(int token_len, int thresold):db_("./ftse.db"),
+        token_len_(token_len), ii_update_threshold_(thresold) {
 }
 
 Database& FullTextSearchEngineEnv::db() {
@@ -29,4 +30,10 @@ void FullTextSearchEngineEnv::add_document(const char *title,
         return;
     }
     Token::text_to_postings_lists(*this, document_id, body32, body32_len, token_len_);
+    if(invert_index_.size() > ii_update_threshold_) {
+        for(auto& ii : invert_index_) {
+            Postings::update_postings(*this, ii.second);
+        }
+        invert_index_.clear();
+    }
 }

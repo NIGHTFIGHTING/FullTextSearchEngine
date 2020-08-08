@@ -6,6 +6,8 @@
 namespace ftse {
 #define UTF8_MAX_SIZE 4 // utf字符占最大字节数
 #define N_GRAM 2 // 二元的Bi-Gram 
+#define RET_FAIL 1
+#define RET_SUCC 0
 
 struct PostingsList {
     int document_id;
