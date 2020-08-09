@@ -3,10 +3,25 @@
 #include <vector>
 #include <iostream>
 #include "ftse_env.h"
+#include "buffer.h"
 
 using namespace ftse;
 using namespace std;
 Postings::Postings() {
+}
+
+void Postings::encode_postings(
+        const std::vector<PostingsList>& postings, Buffer* postings_e) {
+    for(int i = 0; i < postings.size(); ++i) {
+        int document_id = postings[i].document_id;
+        int positions_count = postings[i].positions_count; 
+        Buffer::append_buffer(postings_e, (void *)&document_id, sizeof(int));
+        Buffer::append_buffer(postings_e, (void *)&positions_count, sizeof(int));
+        for(int j = 0; j < postings[i].positions.size(); ++j) {
+            int pos = postings[i].positions[j];
+            Buffer::append_buffer(postings_e, (void *)&pos, sizeof(int));
+        }
+    }
 }
 
 void Postings::decode_postings(
@@ -50,13 +65,19 @@ int Postings::fetch_postings(FullTextSearchEngineEnv& ftse_env, int token_id, st
 void Postings::update_postings(FullTextSearchEngineEnv& ftse_env,
         InvertIndexEntry& ii) {
     std::vector<PostingsList> old_postings;
+    // 从db中获取token_id的倒排列表
     if(RET_FAIL == fetch_postings(ftse_env, ii.token_id, &old_postings)) {
         return;
     }
+    // merge db的倒排列表和内存中的倒排列表
     if(old_postings.size() > 0) {
         ii.postings_list = merge_postings(old_postings, ii.postings_list);
         ii.documents_count += old_postings.size(); 
+        for(int i = 0; i < old_postings.size(); ++i) {
+            ii.positions_count += old_postings[i].positions.size();
+        }
     }
+    //
 }
 
 // 将二者连接成按文档编号升序排列

@@ -4,9 +4,12 @@
 #include <vector>
 namespace ftse {
 class FullTextSearchEngineEnv;
+class Buffer;
 class Postings {
 public:
     Postings(); 
+    static void encode_postings(
+            const std::vector<PostingsList>& postings, Buffer* postings_e);
     static void decode_postings(
             const char* postings_extend, int postings_extend_size,
             std::vector<PostingsList>* postings, int* decode_len);
