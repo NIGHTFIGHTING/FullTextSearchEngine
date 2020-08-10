@@ -10,6 +10,7 @@ public:
     Database& db();
     InvertIndex& get_invert_index();
     void add_document(const char *title, const char *body);
+    int get_token_len();
 private:
     InvertIndex invert_index_; 
     Database db_;

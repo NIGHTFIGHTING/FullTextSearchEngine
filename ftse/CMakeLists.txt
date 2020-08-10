@@ -23,6 +23,8 @@ set(SOURCE_FILES
     src/postings.cpp
     src/utils.h
     src/utils.cpp
+    src/search.h
+    src/search.cpp
     src/main.cpp)
     
 

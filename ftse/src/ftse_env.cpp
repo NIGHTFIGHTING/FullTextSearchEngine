@@ -29,11 +29,15 @@ void FullTextSearchEngineEnv::add_document(const char *title,
     if(1 == Encoding::utf8toutf32(body, body_len, &body32, &body32_len)) {
         return;
     }
-    Token::text_to_postings_lists(*this, document_id, body32, body32_len, token_len_);
+    Token::text_to_postings_lists(*this, document_id, body32, body32_len, token_len_, &invert_index_);
     if(invert_index_.size() > ii_update_threshold_) {
         for(auto& ii : invert_index_) {
             Postings::update_postings(*this, ii.second);
         }
         invert_index_.clear();
     }
+}
+
+int FullTextSearchEngineEnv::get_token_len() {
+    return token_len_;
 }

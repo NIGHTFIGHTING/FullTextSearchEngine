@@ -89,7 +89,7 @@ int Token::ngram_next(const UTF32Char *ustr, const UTF32Char *ustr_end,
 void Token::text_to_postings_lists(FullTextSearchEngineEnv& ftse_env,
         const int document_id,
         const UTF32Char *text, const unsigned int text_len,
-        const int token_len) {
+        const int token_len, InvertIndex* postings) {
     if(!text || text_len <=0) {
         return;
     }
@@ -105,6 +105,8 @@ void Token::text_to_postings_lists(FullTextSearchEngineEnv& ftse_env,
     // ngram_next每次都提取token_len的片段
     for(const UTF32Char* ite = text;
             (t_len = ngram_next(ite, text_end, token_len, &ite)); ++ite, ++position) {
+        // 创建倒排时候，小于N-gram长度的token，也存储在索引库中
+        // 检索时候，忽略掉由t中长度不足N-gram的最后几个字符构成的词元
         if(t_len >= token_len || document_id) {
             cout << "position: " << position << " t_len: " << t_len << endl; 
             int token_utf8_size;
@@ -121,8 +123,8 @@ void Token::text_to_postings_lists(FullTextSearchEngineEnv& ftse_env,
     }
     Utils::print_invert_index_info(buffer_index);
     // 将临时倒排索引merge到累积倒排索引
-    if(buffer_index.size() > 0) {
-        Postings::merge_invert_index(ftse_env.get_invert_index(),
+    if(buffer_index.size() > 0 && postings) {
+        Postings::merge_invert_index(*postings,
                 buffer_index);
     }
 }
@@ -147,7 +149,9 @@ void Token::token_to_postings_lists(FullTextSearchEngineEnv& ftse_env,
     } else {
         // 1:token在所有doc中的数量
         // 1:token在在几个dic中出现
-        InvertIndexEntry ii_entry(token_id, 1, 1);
+        // document_id为0的情况是search时候用的,为了计算TF-IDF
+        InvertIndexEntry ii_entry(token_id, 1,
+            document_id != 0 ? 1 : documents_count);
         // 出现的doc，以及在这个doc出现的次数
         PostingsList pl(document_id, 1);
         pl.positions.push_back(position);
