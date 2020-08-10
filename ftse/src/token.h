@@ -6,6 +6,7 @@ class FullTextSearchEngineEnv;
 class Token {
 public:
     Token(); 
+    // ftse_env获得db, postings是通过n-gram获得的倒排列表
     static void text_to_postings_lists(FullTextSearchEngineEnv& ftse_env,
             const int document_id,
             const UTF32Char *text, const unsigned int text_len,
