@@ -9,6 +9,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
     src/global.h
+    src/buffer.h
+    src/buffer.cpp
     src/ftse_env.h
     src/ftse_env.cpp
     src/encoding.h

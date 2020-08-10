@@ -1,5 +1,5 @@
-#ifndef _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H 
-#define _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H
+#ifndef _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H_ 
+#define _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H_
 #include <vector>
 #include <unordered_map>
 #include <cstring>
@@ -70,5 +70,9 @@ typedef uint32_t UTF32Char;
 // key是token_id, value是InvertIndexEntry
 typedef std::unordered_map<int, InvertIndexEntry> InvertIndex; 
 
+typedef InvertIndex QueryToken;
+typedef InvertIndexEntry QueryTokenEntry;
+typedef PostingsList TokenPositionsList;
+
 }
-#endif // _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H
+#endif // _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H_
