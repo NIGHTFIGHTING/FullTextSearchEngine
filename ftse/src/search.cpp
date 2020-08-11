@@ -41,6 +41,32 @@ void Search::search_docs(FullTextSearchEngineEnv& ftse_env, const QueryToken& qu
         cursors[i].current = cursors[i].documents.begin();
     }
     while(cursors[0].current != cursors[0].documents.end()) {
+        /* 将拥有文档最少的词元称作A */
+        int doc_id = cursors[0].current->document_id;
+        int next_doc_id = 0;
+        for(int j = 1; j < cursors.size(); ++j) {
+            while(cursors[j].current != cursors[j].documents.end()
+                    && cursors[j].current->document_id < doc_id) {
+                cursors[j].current++;
+            } 
+            // token没有在同一个doc_id中
+            if(cursors[j].current == cursors[j].documents.end()) {
+                return;
+            }
+            // 标记下一个可能的doc_id 
+            if(cursors[j].current->document_id != doc_id) {
+                next_doc_id = cursors[j].current->document_id;
+                break;
+            }
+        }
+        if(next_doc_id > 0) {
+            /* 不断获取A的下一个document_id，直到其当前的document_id不小于next_doc_id为止 */
+            while(cursors[0].current != cursors[0].documents.end()
+                    && cursors[0].current->document_id < next_doc_id) {
+                cursors[0].current++;
+            }
+        } else {
+        }
     }
 }
 
