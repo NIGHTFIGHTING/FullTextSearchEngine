@@ -18,7 +18,7 @@ public:
     static void free_buffer(Buffer *buf);
 
     static void append_buffer_bit(Buffer *buf, int bit);
-} buffer;
+};
 #define BUFFER_PTR(b) ((b)->head) /* 返回指向缓冲区开头的指针 */
 #define BUFFER_SIZE(b) ((b)->curr - (b)->head) /* 返回缓冲区的大小 */
 }

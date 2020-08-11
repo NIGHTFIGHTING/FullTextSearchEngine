@@ -12,7 +12,7 @@ Buffer *
 Buffer::alloc_buffer(void)
 {
     Buffer *buf;
-    if ((buf = static_cast<Buffer*>(malloc(sizeof(buffer)))))
+    if ((buf = static_cast<Buffer*>(malloc(sizeof(Buffer)))))
     {
         if ((buf->head = static_cast<char*>(malloc(BUFFER_INIT_MIN))))
         {

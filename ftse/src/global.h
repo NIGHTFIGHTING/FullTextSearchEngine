@@ -76,7 +76,7 @@ typedef PostingsList TokenPositionsList;
 
 struct DocSearchCursor {
   std::vector<TokenPositionsList> documents; /* 文档编号的序列 */
-  std::vector<TokenPositionsList> current;   /* 当前的文档编号 */
+  std::vector<TokenPositionsList>::iterator current;   /* 当前的文档编号 */
 };
 
 struct PhraseSearchCursor {
