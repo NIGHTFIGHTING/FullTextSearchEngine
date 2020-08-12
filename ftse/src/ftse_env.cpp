@@ -4,8 +4,10 @@
 #include "postings.h"
 
 using namespace ftse;
-FullTextSearchEngineEnv::FullTextSearchEngineEnv(int token_len, int thresold):db_("./ftse.db"),
-        token_len_(token_len), ii_update_threshold_(thresold) {
+FullTextSearchEngineEnv::FullTextSearchEngineEnv(int token_len, int thresold,
+        bool enable_phrase_search):db_("./ftse.db"),
+        token_len_(token_len), ii_update_threshold_(thresold),
+        enable_phrase_search_(enable_phrase_search) {
 }
 
 Database& FullTextSearchEngineEnv::db() {
@@ -40,4 +42,8 @@ void FullTextSearchEngineEnv::add_document(const char *title,
 
 int FullTextSearchEngineEnv::get_token_len() {
     return token_len_;
+}
+
+bool FullTextSearchEngineEnv::get_enable_phrase_search() {
+    return enable_phrase_search_;
 }

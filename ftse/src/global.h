@@ -74,6 +74,7 @@ typedef InvertIndex QueryToken;
 typedef InvertIndexEntry QueryTokenEntry;
 typedef PostingsList TokenPositionsList;
 
+// 存储检索token的存储的倒排列表
 struct DocSearchCursor {
   std::vector<TokenPositionsList> documents; /* 文档编号的序列 */
   std::vector<TokenPositionsList>::iterator current;   /* 当前的文档编号 */
@@ -82,7 +83,7 @@ struct DocSearchCursor {
 struct PhraseSearchCursor {
   std::vector<int> positions; /* 位置信息 */
   int base;                  /* 词元在查询中的位置 */
-  int current;              /* 当前的位置信息 */
+  std::vector<int>::iterator current;              /* 当前的位置信息 */
 };
 
 //struct SearchResults{
@@ -91,5 +92,6 @@ struct PhraseSearchCursor {
 //  UT_hash_handle hh;         /* 用于将该结构体转化为哈希表 */
 //};
 typedef std::unordered_map<int, double> SearchResults;
+typedef std::pair<int, InvertIndexEntry> PAIR;
 }
 #endif // _FULL_TEXT_SEARCH_ENGINE_GLOBAL_H_

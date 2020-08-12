@@ -19,9 +19,55 @@ void Search::split_query_to_tokens(FullTextSearchEngineEnv& ftse_env,
             query_tokens);
 }
 
+int Search::search_phrase(const std::vector<PAIR>& query_tokens,
+        const std::vector<DocSearchCursor>& doc_cursors) {
+    int n_positions = 0;
+    for(auto& ite : query_tokens) {
+        n_positions += ite.second.positions_count;
+    }
+    std::vector<PhraseSearchCursor> cursors(n_positions);
+    int cur = 0;
+    for(auto& ite : query_tokens) {
+        // 因为对于query_token只存在一个doc，所以直接取得ostings_list[0]
+        for(int i = 0; i < ite.second.postings_list[0].positions.size(); ++i) {
+            cursors[cur].base = ite.second.postings_list[0].positions[i];
+            cursors[cur].positions = doc_cursors[i].current->positions;
+            cursors[cur].current = cursors[cur].positions.begin();
+            ++cur;
+        }
+    }
+    int phrase_count = 0;
+    while(cursors[0].current != cursors[0].positions.end()) {
+        int rel_position, next_rel_position;
+        rel_position = next_rel_position = *(cursors[0].current) - cursors[0].base;
+        for(int i = 1; i < cursors.size(); ++i) {
+            while(cursors[i].current != cursors[i].positions.end()
+                    && *(cursors[i].current) - cursors[cur].base < rel_position) {
+                ++cursors[i].current;
+            }
+            if(cursors[i].current == cursors[i].positions.end()) {
+                return phrase_count;
+            }
+            if(*(cursors[i].current) - cursors[cur].base != rel_position) {
+                next_rel_position = *(cursors[i].current) - cursors[cur].base;
+                break;
+            }
+        }
+        if(next_rel_position > rel_position) {
+            while(cursors[0].current != cursors[0].positions.end()
+                    && *(cursors[0].current) - cursors[0].base < next_rel_position) {
+                ++cursors[0].current;
+            }
+        } else {
+            ++phrase_count;
+            ++cursors[0].current;
+        }
+    }
+    return phrase_count;
+}
+
 void Search::search_docs(FullTextSearchEngineEnv& ftse_env, const QueryToken& query_tokens,
         SearchResults* results) {
-    typedef std::pair<int, InvertIndexEntry> PAIR;
     std::vector<PAIR> tokens(
             query_tokens.begin(), query_tokens.end());
     // 按照token在所有doc中出现的次数排序
@@ -66,6 +112,11 @@ void Search::search_docs(FullTextSearchEngineEnv& ftse_env, const QueryToken& qu
                 cursors[0].current++;
             }
         } else {
+            int phrase_count = -1;
+            if (ftse_env.get_enable_phrase_search()) {
+                phrase_count = search_phrase(tokens, cursors);
+            } else {
+            }
         }
     }
 }

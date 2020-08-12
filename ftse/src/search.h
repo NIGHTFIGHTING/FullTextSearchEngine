@@ -7,6 +7,8 @@ class FullTextSearchEngineEnv;
 class Search {
 public:
     void search(FullTextSearchEngineEnv& ftse_env, const char* query);
+    int search_phrase(const std::vector<PAIR>& query_tokens,
+            const std::vector<DocSearchCursor>& doc_cursors);
     void search_docs(FullTextSearchEngineEnv& ftse_env, const QueryToken& query_tokens,
             SearchResults* results);
     void split_query_to_tokens(FullTextSearchEngineEnv& ftse_env,
